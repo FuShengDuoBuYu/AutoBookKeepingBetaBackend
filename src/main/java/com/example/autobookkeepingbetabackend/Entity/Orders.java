@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
-public class Order_18916629734 implements Serializable {
+public class Orders implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -27,7 +27,7 @@ public class Order_18916629734 implements Serializable {
     private String clock;
 
     @Column
-    private BigDecimal money;
+    private Double money;
 
     @Column
     private String bankName;
@@ -37,4 +37,19 @@ public class Order_18916629734 implements Serializable {
 
     @Column
     private String costType;
+
+    @Column
+    private String userId;
+
+    public Orders(int year, int month, int day, String clock, Double money, String bankName, String orderRemark, String costType, String userId) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.clock = clock;
+        this.money = money;
+        this.bankName = bankName;
+        this.orderRemark = orderRemark;
+        this.costType = costType;
+        this.userId = userId;
+    }
 }
