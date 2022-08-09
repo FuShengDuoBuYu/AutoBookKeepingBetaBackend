@@ -7,6 +7,8 @@ import com.example.autobookkeepingbetabackend.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class OrderServiceImpl implements OrderService {
     OrderRepository orderRepository;
@@ -19,12 +21,23 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Response<?> saveOrder(Orders order) {
         try {
-            orderRepository.save(order);
-            return new Response<>(true,"操作成功",null);
+            Orders o = orderRepository.save(order);
+            return new Response<>(true,"添加成功",o.getId());
         }
         catch (Exception e){
             e.printStackTrace();
             return new Response<>(false,e.toString(),null);
         }
+    }
+
+    @Override
+    public Orders getOrderById(int id) {
+        return orderRepository.findOrdersById(id);
+    }
+
+    @Transactional
+    @Override
+    public Integer deleteOrderById(int id) {
+        return orderRepository.deleteOrdersById(id);
     }
 }

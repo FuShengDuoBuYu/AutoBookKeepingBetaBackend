@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class Orders implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
 
     @Column
     private int year;
@@ -51,5 +51,8 @@ public class Orders implements Serializable {
         this.orderRemark = orderRemark;
         this.costType = costType;
         this.userId = userId;
+    }
+
+    public Orders() {
     }
 }
