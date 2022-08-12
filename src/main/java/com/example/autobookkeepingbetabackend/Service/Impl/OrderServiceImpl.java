@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -39,5 +40,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Integer deleteOrderById(int id) {
         return orderRepository.deleteOrdersById(id);
+    }
+
+    @Override
+    public List<Orders> findOrdersByUserId(String userId) {
+
+        return orderRepository.findOrdersByUserIdIs(userId);
+    }
+
+    @Override
+    public List<Orders> findOrdersByUserIdAndMonth(String userId, int month) {
+        return orderRepository.findOrdersByUserIdAndMonth(userId,month);
     }
 }
