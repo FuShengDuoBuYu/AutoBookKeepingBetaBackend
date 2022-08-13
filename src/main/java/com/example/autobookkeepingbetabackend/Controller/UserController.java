@@ -39,6 +39,17 @@ public class UserController {
         return userService.saveUser(pendingModifyUser);
     }
 
+    //用户修改头像
+    @PutMapping("/user/modifyPortrait")
+    public Response<?> modifyPortrait(@RequestBody JSONObject modifyPortraitJson){
+        String phoneNum = (String) modifyPortraitJson.get("phoneNum");
+        String newPortrait = (String) modifyPortraitJson.get("newPortrait");
+
+        User pendingModifyUser = userService.getUserByPhoneNum(phoneNum);
+        pendingModifyUser.setPortrait(newPortrait);
+        return userService.saveUser(pendingModifyUser);
+    }
+
     //用户创建家庭
     @PostMapping("/user/createFamily")
     public Response<?> createFamily(@RequestBody JSONObject createFamilyJson){

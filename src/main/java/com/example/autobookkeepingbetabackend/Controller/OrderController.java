@@ -87,6 +87,8 @@ public class OrderController {
     //查询家庭账单
     @GetMapping("/findMonthFamilyOrders/{familyId}/{month}")
     public Response<?> findMonthFamilyOrders(@PathVariable String familyId,@PathVariable String month){
+        List<List<?>> familyUersAndFamilyMembers = new ArrayList<>();
+
         //先找到家庭的用户
         List<User> familyUsers = (List<User>) userService.getUsersByFamilyId(familyId).getData();
         //在根据用户的id查找到所有的账单
@@ -107,8 +109,9 @@ public class OrderController {
                 return b.getDay() - a.getDay();
             }
         });
-//        System.out.println(familyOrders.size());
-        return new Response<>(true,"查询成功",familyOrders);
+        familyUersAndFamilyMembers.add(familyOrders);
+        familyUersAndFamilyMembers.add(familyUsers);
+        return new Response<>(true,"查询成功",familyUersAndFamilyMembers);
     }
 
 }
