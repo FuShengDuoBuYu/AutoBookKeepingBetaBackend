@@ -30,14 +30,18 @@ public class User implements Serializable {
     @Column
     private String portrait;
 
+    @Column
+    private String bankNumber;
+
     public User(){}
 
-    public User(String phoneNum, String password, String nickname, String familyId, String familyIdentity, String portrait) {
+    public User(String phoneNum, String password, String nickname, String familyId, String familyIdentity, String portrait,String bankNumber) {
         this.phoneNum = phoneNum;
         this.password = password;
         this.nickname = nickname;
         this.familyId = familyId;
         this.familyIdentity = familyIdentity;
         this.portrait = portrait;
+        this.bankNumber = bankNumber;
     }
 }

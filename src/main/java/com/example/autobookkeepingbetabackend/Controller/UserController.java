@@ -24,7 +24,7 @@ public class UserController {
         String phoneNum = (String) addUserJson.get("phoneNum");
         String password = (String) addUserJson.get("password");
 
-        User addUser = new User(phoneNum,password,null,null,null,null);
+        User addUser = new User(phoneNum,password,null,null,null,null,null);
         return userService.saveUser(addUser);
     }
 
@@ -89,7 +89,17 @@ public class UserController {
     //查询某个家庭的所有成员
     @GetMapping("/user/getFamilyMembers/{familyId}")
     public Response<?> getFamilyMembers(@PathVariable String familyId){
-        System.out.println(familyId);
         return userService.getUsersByFamilyId(familyId);
+    }
+
+    //用户修改记录的银行号码
+    @PutMapping("/user/modifyBankNumber")
+    public Response<?> modifyBankNumber(@RequestBody JSONObject modifyBankNumberJson){
+        String phoneNum = (String) modifyBankNumberJson.get("phoneNum");
+        String bankNumbers = (String) modifyBankNumberJson.get("bankNumbers");
+
+        User pendingModifyUser = userService.getUserByPhoneNum(phoneNum);
+        pendingModifyUser.setBankNumber(bankNumbers);
+        return userService.saveUser(pendingModifyUser);
     }
 }
