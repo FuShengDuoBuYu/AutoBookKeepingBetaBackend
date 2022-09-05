@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,11 +22,6 @@ public class OrderController {
     OrderService orderService;
     UserService userService;
 
-//    @GetMapping("/{phoneNum}/findall")
-//    public Response<?> findall(@PathVariable String phoneNum){
-//        List<Orders> orders = orderRepository.findOrdersByUserIdIs(phoneNum);
-//        return new Response<>(true,"操作成功",orders);
-//    }
     @Autowired
     public OrderController(OrderService orderService,UserService userService){
         this.userService = userService;
@@ -93,8 +89,10 @@ public class OrderController {
         List<User> familyUsers = (List<User>) userService.getUsersByFamilyId(familyId).getData();
         //在根据用户的id查找到所有的账单
         List<Orders> familyOrders = new ArrayList<>();
+        Calendar date = Calendar.getInstance();
+        String year = String.valueOf(date.get(Calendar.YEAR));
         for(int i = 0;i < familyUsers.size();i++){
-            List<Orders> userOrders = (List<Orders>) orderService.findOrdersByUserIdAndMonth(familyUsers.get(i).getPhoneNum(),Integer.valueOf(month));
+            List<Orders> userOrders = (List<Orders>) orderService.findOrdersByUserIdAndMonthAndYear(familyUsers.get(i).getPhoneNum(),Integer.valueOf(month),Integer.valueOf(year));
             familyOrders.addAll(userOrders);
         }
         //排序一下,按照年月日排序
@@ -113,5 +111,12 @@ public class OrderController {
         familyUersAndFamilyMembers.add(familyUsers);
         return new Response<>(true,"查询成功",familyUersAndFamilyMembers);
     }
+
+    //查询家庭各个月份的收支
+//    @GetMapping("/findFamilyMonthCosts/{familyId}")
+//    public Response<?> findFamilyMonthCosts(@PathVariable String familyId){
+//
+//        return new Response<>(true,"查询成功",res);
+//    }
 
 }

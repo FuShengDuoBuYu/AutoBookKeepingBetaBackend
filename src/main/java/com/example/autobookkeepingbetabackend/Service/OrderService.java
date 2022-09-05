@@ -15,5 +15,5 @@ public interface OrderService {
 
     public List<Orders> findOrdersByUserId(String userId);
 
-    public List<Orders> findOrdersByUserIdAndMonth(String userId,int month);
+    public List<Orders> findOrdersByUserIdAndMonthAndYear(String userId,int month,int year);
 }

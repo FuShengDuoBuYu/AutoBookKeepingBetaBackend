@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Orders> findOrdersByUserIdAndMonth(String userId, int month) {
-        return orderRepository.findOrdersByUserIdAndMonth(userId,month);
+    public List<Orders> findOrdersByUserIdAndMonthAndYear(String userId, int month,int year) {
+        return orderRepository.findOrdersByUserIdAndMonthAndYear(userId,month,year);
     }
 }
