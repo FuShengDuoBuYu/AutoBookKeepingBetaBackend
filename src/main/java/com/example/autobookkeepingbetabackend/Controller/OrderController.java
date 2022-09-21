@@ -11,10 +11,7 @@ import com.example.autobookkeepingbetabackend.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class OrderController {
@@ -113,10 +110,65 @@ public class OrderController {
     }
 
     //查询家庭各个月份的收支
-//    @GetMapping("/findFamilyMonthCosts/{familyId}")
-//    public Response<?> findFamilyMonthCosts(@PathVariable String familyId){
-//
-//        return new Response<>(true,"查询成功",res);
-//    }
+    @GetMapping("/findFamilyAllMonthCosts/{familyId}")
+    public Response<?> findFamilyMonthCosts(@PathVariable String familyId){
+        //先找到家庭的用户
+        List<User> familyUsers = (List<User>) userService.getUsersByFamilyId(familyId).getData();
+        //查看当前的年份月份
+        Calendar date = Calendar.getInstance();
+        Integer year = date.get(Calendar.YEAR);
+        Integer month = date.get(Calendar.MONTH)+1;
+        //创建一个数组,用来存储每个月的收支
+        List<Double> familyMonthCosts = new ArrayList<>();
+        //记录12个月的收支
+        for(int i = 0;i < 12;i++){
+            Double monthCost = 0.0;
+            for(int j = 0;j < familyUsers.size();j++){
+                //根据用户id和年月查找到对应的账单
+                List<Orders> userOrders = (List<Orders>) orderService.findOrdersByUserIdAndMonthAndYear(familyUsers.get(j).getPhoneNum(),month,year);
+                for(int k = 0;k < userOrders.size();k++){
+                    if(userOrders.get(k).getCostType().equals("支出")){
+                        monthCost -= userOrders.get(k).getMoney();
+                    }
+                    else {
+                        monthCost += userOrders.get(k).getMoney();
+                    }
+                }
+            }
+            familyMonthCosts.add(monthCost);
+            month--;
+            if(month == 0){
+                month = 12;
+                year--;
+            }
+        }
+        return new Response<>(true,"查询成功",familyMonthCosts);
+    }
+
+    //查询家庭某个月的支出情况
+    @GetMapping("/findFamilySomeMonthCosts/{familyId}/{year}/{month}")
+    public Response<?> findFamilySomeMonthCosts(@PathVariable String familyId,@PathVariable Integer year,@PathVariable Integer month){
+        //先找到家庭的用户
+        List<User> familyUsers = (List<User>) userService.getUsersByFamilyId(familyId).getData();
+        //将该家庭的该月账单按照支出类型分组
+        Map<String,List<Orders>> familySomeMonthCosts = new HashMap<>();
+        for(int i = 0;i < familyUsers.size();i++){
+            //根据用户id和年月查找到对应的账单
+            List<Orders> userOrders = (List<Orders>) orderService.findOrdersByUserIdAndMonthAndYear(familyUsers.get(i).getPhoneNum(),month,year);
+            for(int j = 0;j < userOrders.size();j++){
+                if(familySomeMonthCosts.containsKey(userOrders.get(j).getCostType())){
+                    familySomeMonthCosts.get(userOrders.get(j).getCostType()).add(userOrders.get(j));
+                }
+                else {
+                    List<Orders> orders = new ArrayList<>();
+                    orders.add(userOrders.get(j));
+                    familySomeMonthCosts.put(userOrders.get(j).getCostType(),orders);
+                }
+            }
+        }
+        //删除map中的收入
+        familySomeMonthCosts.remove("收入");
+        return new Response<>(true,"查询成功",familySomeMonthCosts);
+    }
 
 }
