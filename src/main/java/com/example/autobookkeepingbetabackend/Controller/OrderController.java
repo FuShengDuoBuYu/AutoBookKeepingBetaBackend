@@ -171,4 +171,104 @@ public class OrderController {
         return new Response<>(true,"查询成功",familySomeMonthCosts);
     }
 
+    //搜索查询账单信息
+    @PostMapping("/searchOrders")
+    public Response<?> searchOrders(@RequestBody JSONObject searchOrdersJson){
+        String mode = searchOrdersJson.getString("mode");
+        String familyId = searchOrdersJson.getString("familyId");
+        String userId = searchOrdersJson.getString("userId");
+        String year = searchOrdersJson.getString("year");
+        String month = searchOrdersJson.getString("month");
+        String day = searchOrdersJson.getString("day");
+        String searchOrderRemark = searchOrdersJson.getString("searchOrderRemark");
+        String stringSearchCostType = searchOrdersJson.getString("searchCostType").substring(1,searchOrdersJson.getString("searchCostType").length()-1);
+        String[] searchCostType = stringSearchCostType.split(", ");
+//        //去除空格
+//        for(int i = 0;i < searchCostType.length;i++){
+//            searchCostType[i] = searchCostType[i].trim();
+//        }
+        Boolean ifIgnoreYear = searchOrdersJson.getBoolean("ifIgnoreYear");
+        Boolean ifIgnoreMonth = searchOrdersJson.getBoolean("ifIgnoreMonth");
+        Boolean ifIgnoreDay = searchOrdersJson.getBoolean("ifIgnoreDay");
+        //打印所有信息
+        System.out.println("mode:"+mode);
+        System.out.println("familyId:"+familyId);
+        System.out.println("userId:"+userId);
+        System.out.println("year:"+year);
+        System.out.println("month:"+month);
+        System.out.println("day:"+day);
+        System.out.println("searchOrderRemark:"+searchOrderRemark);
+        System.out.println("stringSearchCostType"+stringSearchCostType);
+        System.out.println("searchCostType:"+searchCostType);
+        System.out.println("ifIgnoreYear:"+ifIgnoreYear);
+        System.out.println("ifIgnoreMonth:"+ifIgnoreMonth);
+        System.out.println("ifIgnoreDay:"+ifIgnoreDay);
+
+        List<Orders> searchOrders = new ArrayList<>();
+        Map<String,Object> result = new HashMap<>();
+        //家庭版
+        if(mode.equals("家庭版")){
+            //找到家庭的所有用户
+            List<User> familyUsers = (List<User>) userService.getUsersByFamilyId(familyId).getData();
+            //遍历所有用户
+            for(User user:familyUsers){
+                String familyUserId = user.getPhoneNum();
+                if(ifIgnoreYear){
+                    searchOrders.addAll(orderService.findOrdersByUserIdAndOrderRemarkContainsAndCostType(familyUserId,searchOrderRemark,searchCostType));
+                }
+                else if(ifIgnoreMonth){
+                    searchOrders.addAll(orderService.findOrdersByUserIdAndYearAndOrderRemarkContainsAndCostType(familyUserId,Integer.parseInt(year),searchOrderRemark,searchCostType));
+                }
+                else if(ifIgnoreDay){
+                    searchOrders.addAll(orderService.findOrdersByUserIdAndYearAndMonthAndOrderRemarkContainsAndCostType(familyUserId,Integer.parseInt(year),Integer.parseInt(month),searchOrderRemark,searchCostType));
+                }
+                else {
+                    searchOrders.addAll(orderService.findOrdersByUserIdAndYearAndMonthAndDayAndOrderRemarkContainsAndCostType(familyUserId,Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day),searchOrderRemark,searchCostType));
+                }
+            }
+            //用户信息
+            ArrayList<User> users = new ArrayList<>();
+            users.addAll(familyUsers);
+            result.put("userInfo",users);
+            //对账单时间排序
+            Collections.sort(searchOrders,(a,b)->{
+                if(a.getYear()!=b.getYear()){
+                    return b.getYear()-a.getYear();
+                }
+                else if(a.getMonth()!=b.getMonth()){
+                    return b.getMonth()-a.getMonth();
+                }
+                else {
+                    return b.getDay() - a.getDay();
+                }
+            });
+            result.put("ordersInfo",searchOrders);
+        }
+        //个人版
+        else{
+            //全部账单
+            if(ifIgnoreYear){
+                searchOrders = orderService.findOrdersByUserIdAndOrderRemarkContainsAndCostType(userId,searchOrderRemark,searchCostType);
+            }
+            //某年账单
+            else if(ifIgnoreMonth){
+                searchOrders = orderService.findOrdersByUserIdAndYearAndOrderRemarkContainsAndCostType(userId,Integer.parseInt(year),searchOrderRemark,searchCostType);
+            }
+            //某月账单
+            else if(ifIgnoreDay){
+                searchOrders = orderService.findOrdersByUserIdAndYearAndMonthAndOrderRemarkContainsAndCostType(userId,Integer.parseInt(year),Integer.parseInt(month),searchOrderRemark,searchCostType);
+            }
+            //某日账单
+            else {
+                //账单信息
+                searchOrders = orderService.findOrdersByUserIdAndYearAndMonthAndDayAndOrderRemarkContainsAndCostType(userId,Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day),searchOrderRemark,searchCostType);
+            }
+            //用户信息
+            ArrayList<User> users = new ArrayList<>();
+            users.add(userService.getUserByPhoneNum(userId));
+            result.put("userInfo",users);
+            result.put("ordersInfo",searchOrders);
+        }
+        return new Response<>(true,"查询成功",result);
+    }
 }

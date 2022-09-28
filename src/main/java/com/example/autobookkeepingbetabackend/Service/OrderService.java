@@ -17,4 +17,12 @@ public interface OrderService {
 
     public List<Orders> findOrdersByUserIdAndMonthAndYear(String userId,int month,int year);
 
+    public List<Orders> findOrdersByUserIdAndYearAndMonthAndDayAndOrderRemarkContainsAndCostType(String userId,int year,int month,int day,String orderRemark,String[] costType);
+
+    public List<Orders> findOrdersByUserIdAndYearAndMonthAndOrderRemarkContainsAndCostType(String userId,int year,int month,String orderRemark,String[] costType);
+
+    public List<Orders> findOrdersByUserIdAndYearAndOrderRemarkContainsAndCostType(String userId,int year,String orderRemark,String[] costType);
+
+    public List<Orders> findOrdersByUserIdAndOrderRemarkContainsAndCostType(String userId,String orderRemark,String[] costType);
+
 }
