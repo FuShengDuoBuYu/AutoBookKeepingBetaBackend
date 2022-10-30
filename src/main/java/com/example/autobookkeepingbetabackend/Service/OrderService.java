@@ -25,4 +25,5 @@ public interface OrderService {
 
     public List<Orders> findOrdersByUserIdAndOrderRemarkContainsAndCostType(String userId,String orderRemark,String[] costType);
 
+    public Orders findOrdersById(int id);
 }

@@ -111,6 +111,11 @@ public class OrderServiceImpl implements OrderService {
         return res;
     }
 
+    @Override
+    public Orders findOrdersById(int id) {
+        return orderRepository.findOrdersById(id);
+    }
+
     private boolean ifContain(String[] arr,String s){
         for (String a:arr){
             if (a.equals(s)){

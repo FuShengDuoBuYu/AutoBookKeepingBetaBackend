@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.autobookkeepingbetabackend.Entity.Orders;
 import com.example.autobookkeepingbetabackend.Entity.User;
 import com.example.autobookkeepingbetabackend.Service.Impl.OrderServiceImpl;
+import com.example.autobookkeepingbetabackend.Service.OrderMapPlaceService;
 import com.example.autobookkeepingbetabackend.Service.OrderService;
 import com.example.autobookkeepingbetabackend.Service.UserService;
 import com.example.autobookkeepingbetabackend.Util.Response;
@@ -18,11 +19,13 @@ public class OrderController {
 
     OrderService orderService;
     UserService userService;
+    OrderMapPlaceService orderMapPlaceService;
 
     @Autowired
-    public OrderController(OrderService orderService,UserService userService){
+    public OrderController(OrderService orderService,UserService userService,OrderMapPlaceService orderMapPlaceService){
         this.userService = userService;
         this.orderService = orderService;
+        this.orderMapPlaceService = orderMapPlaceService;
     }
 
     //添加账单
@@ -73,6 +76,8 @@ public class OrderController {
     //删除账单
     @DeleteMapping("/deleteOrder/{id}")
     public Response<?> deleteOrder(@PathVariable int id){
+        //删除地理位置
+        orderMapPlaceService.deleteOrderMapPlaceByOrderId(id);
         Integer delete=orderService.deleteOrderById(id);
         return new Response<>(delete==1,delete==1?"删除成功":"删除失败,请检查是否有该账单");
     }
@@ -183,10 +188,6 @@ public class OrderController {
         String searchOrderRemark = searchOrdersJson.getString("searchOrderRemark");
         String stringSearchCostType = searchOrdersJson.getString("searchCostType").substring(1,searchOrdersJson.getString("searchCostType").length()-1);
         String[] searchCostType = stringSearchCostType.split(", ");
-//        //去除空格
-//        for(int i = 0;i < searchCostType.length;i++){
-//            searchCostType[i] = searchCostType[i].trim();
-//        }
         Boolean ifIgnoreYear = searchOrdersJson.getBoolean("ifIgnoreYear");
         Boolean ifIgnoreMonth = searchOrdersJson.getBoolean("ifIgnoreMonth");
         Boolean ifIgnoreDay = searchOrdersJson.getBoolean("ifIgnoreDay");
