@@ -55,4 +55,17 @@ public class Utils {
         }
         return builder.toString();
     }
+
+    //获取当前时间,到分钟
+public static String getCurrentTime(){
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        return year + "-" + month + "-" + day + " " + hour + ":" + minute;
+    }
 }

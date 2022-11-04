@@ -12,6 +12,7 @@ import com.example.autobookkeepingbetabackend.Util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -47,7 +48,7 @@ public class OrderMapPlaceServiceController {
     private Response<?> findTopNFamilyOrderMapPlace(@PathVariable String familyId,@PathVariable String n){
         //找到家庭成员,根据userId
         List<User> familyUsers = (List<User>) userService.getUsersByFamilyId(familyId).getData();
-        List<OrderMapPlace> res = null;
+        List<OrderMapPlace> res = new ArrayList<>();
         for (User user:familyUsers){
             Response<List<OrderMapPlace>> response = orderMapPlaceService.findTopNPersonalOrderMapPlace(user.getPhoneNum(),Integer.parseInt(n));
             if (response.isSuccess()){
