@@ -26,12 +26,6 @@ public class TodoItem implements Serializable {
     private String handlerId;
 
     @Column
-    private String posterPortrait;
-
-    @Column
-    private String handlerPortrait;
-
-    @Column
     private Boolean isFinished;
 
     @Column
@@ -42,13 +36,11 @@ public class TodoItem implements Serializable {
 
     public TodoItem() {}
 
-    public TodoItem(String itemTitle, String postTime, String posterId, String handlerId, String posterPortrait, String handlerPortrait, Boolean isFinished, String handleTime, String familyId) {
+    public TodoItem(String itemTitle, String postTime, String posterId, String handlerId, Boolean isFinished, String handleTime, String familyId) {
         this.itemTitle = itemTitle;
         this.postTime = postTime;
         this.posterId = posterId;
         this.handlerId = handlerId;
-        this.posterPortrait = posterPortrait;
-        this.handlerPortrait = handlerPortrait;
         this.isFinished = isFinished;
         this.handleTime = handleTime;
         this.familyId = familyId;
@@ -84,22 +76,6 @@ public class TodoItem implements Serializable {
 
     public void setHandlerId(String handlerId) {
         this.handlerId = handlerId;
-    }
-
-    public String getPosterPortrait() {
-        return posterPortrait;
-    }
-
-    public void setPosterPortrait(String posterPortrait) {
-        this.posterPortrait = posterPortrait;
-    }
-
-    public String getHandlerPortrait() {
-        return handlerPortrait;
-    }
-
-    public void setHandlerPortrait(String handlerPortrait) {
-        this.handlerPortrait = handlerPortrait;
     }
 
     public Boolean getFinished() {
